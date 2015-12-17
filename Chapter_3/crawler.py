@@ -55,7 +55,7 @@ allExtLinks = set()
 allIntLinks = set()
 def getAllExternalLinks(siteUrl):
 	html = urlopen(siteUrl)
-	bsObj = BeautifulSoup(html)
+	bsObj = BeautifulSoup(html, "html.parser")
 	internalLinks = getInternalLinks(bsObj, splitAddress(siteUrl)[0])
 	externalLinks = getExternalLinks(bsObj, splitAddress(siteUrl)[0])
 	for link in externalLinks:
