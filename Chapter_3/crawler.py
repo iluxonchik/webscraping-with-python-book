@@ -1,9 +1,6 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
-import re, datetime, random, sys, io
-
-# backslashreplace = replace with backslashed escape sequences (escape unsuported chars)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer,'cp437','backslashreplace')
+import re, datetime, random
 
 pages = set()
 random.seed(datetime.datetime.now())
@@ -15,7 +12,11 @@ def getInternalLinks(bsObj, includeUrl):
 	for link in bsObj.findAll("a", href=re.compile("^(/|.*"+includeUrl+")")):
 		if link.attrs['href'] is not None:
 			if link.attrs['href'] not in internalLinks:
-				internalLinks.append(link.attrs['href'])
+				if (link.attrs['href'][0] == "/"):
+					internalLinks.append("http://" + includeUrl + link.attrs['href'])
+				else:
+					internalLinks.append(link.attrs['href'])
+
 	return internalLinks
 
 # Retrieves a list of external links found on a page
@@ -38,7 +39,7 @@ def getRandomExternalLink(startingPage):
 	bsObj = BeautifulSoup(html, "html.parser")
 	externalLinks = getExternalLinks(bsObj, splitAddress(startingPage)[0])
 	if len(externalLinks) == 0:
-		internalLinks = getInternalLinks(bsObj, startingPage)
+		internalLinks = getInternalLinks(bsObj, splitAddress(startingPage)[0])
 		return getRandomExternalLink(internalLinks[random.randint(0, 
 													len(internalLinks)-1)])
 	else:
@@ -48,5 +49,23 @@ def followExternalOnly(startingSite):
 	externalLink = getRandomExternalLink(startingSite)
 	print("Random external link is: " + externalLink)
 	followExternalOnly(externalLink)
+
+# Collect a list of all external links found on a website
+allExtLinks = set()
+allIntLinks = set()
+def getAllExternalLinks(siteUrl):
+	html = urlopen(siteUrl)
+	bsObj = BeautifulSoup(html)
+	internalLinks = getInternalLinks(bsObj, splitAddress(siteUrl)[0])
+	externalLinks = getExternalLinks(bsObj, splitAddress(siteUrl)[0])
+	for link in externalLinks:
+		if link not in allExtLinks:
+			allExtLinks.add(link)
+			print(link)
+	for link in internalLinks:
+		if link not in allIntLinks:
+			print("About to get link: " + link)
+			allIntLinks.add(link)
+			getAllExternalLinks(link)
 
 followExternalOnly("https://en.wikipedia.org/wiki/Main_Page")
