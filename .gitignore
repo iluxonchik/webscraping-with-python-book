@@ -57,4 +57,4 @@ docs/_build/
 target/
 
 # Project Specific
-tokens.py
+Chapter_4/tokens.py # OAuth tokens
