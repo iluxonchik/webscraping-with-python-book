@@ -59,3 +59,4 @@ target/
 # Project Specific
 Chapter_4/tokens.py
 Chapter_4/google_api.py
+Chapter_5/connectvars.py
