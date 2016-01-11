@@ -24,12 +24,32 @@ def ngrams(input, n):
     input = clean_input(input)
     output = {}
     for i in range(len(input)- n + 1):
-        ngram_temp = ' '.join(input[i:i+n]) # transform list to string
+        ngram = input[i:i+n]
+        if is_common(ngram):
+             continue
+        ngram_temp = ' '.join(ngram) # transform list to string
         if ngram_temp not in output:
             output[ngram_temp] = 1
         else:
             output[ngram_temp] += 1
     return output
+
+def is_common(ngram):
+    common_words = ["the", "be", "and", "of", "a", "in", "to", "have", "it", 
+    "i", "that", "for", "you", "he", "with", "on", "do", "say", "this", 
+    "they", "is", "an", "at", "but","we", "his", "from", "that", "not", 
+    "by", "she", "or", "as", "what", "go", "their","can", "who", "get", 
+    "if", "would", "her", "all", "my", "make", "about", "know", "will", 
+    "as", "up", "one", "time", "has", "been", "there", "year", "so", "think", 
+    "when", "which", "them", "some", "me", "people", "take", "out", "into", 
+    "just", "see", "him", "your", "come", "could", "now", "than", "like", 
+    "other", "how", "then", "its", "our", "two", "more", "these", "want", "way", "look", 
+    "first", "also", "new", "because", "day", "more", "use", "no", "man", 
+    "find", "here", "thing", "give", "many", "well"]
+    for word in ngram:
+        if word in common_words:
+            return True
+    return False
 
 content = str(urlopen('http://pythonscraping.com/files/inaugurationSpeech.txt').read())
 ngrams = ngrams(content, 2)
