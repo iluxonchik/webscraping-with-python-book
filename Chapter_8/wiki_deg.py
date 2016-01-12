@@ -5,7 +5,7 @@ import pymysql, connectvars
 conn = pymysql.connect(host=connectvars.DB_HOST, user=connectvars.DB_USER, passwd=connectvars.DB_PWD, charset='utf8')
 
 cur = conn.cursor()
-cur.execute("USE scraping")
+cur.execute("USE wikipedia")
 
 # BAD solution, exceptions should not be used for that!
 class SolutionFound(RuntimeError):
@@ -19,7 +19,7 @@ def getLinks(fromPageId):
 def constructDict(currentPageId):
     links = getLinks(currentPageId)
     if links:
-        return dict(zip(links, [{}]*len(links)))
+        return dict(zip(links, [{}]*len(links))) # form a 
     return {}
 
 def searchDepth(targetPageId, currentPageId, linkTree, depth):
@@ -44,7 +44,7 @@ def searchDepth(targetPageId, currentPageId, linkTree, depth):
     return linkTree
 
 try:
-    searchDepth(134951, 1, {}, 4)
+    searchDepth(10, 2, {}, 4)
     print("No solution found!")
 except SolutionFound as e:
     print(e.message)
